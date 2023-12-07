@@ -5,9 +5,20 @@
     <title>Title</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
 
-
     <script src="/js/jquery-3.7.1.min.js"></script>
+
+    <link rel="stylesheet" href="/plugins/bootstraptable/bootstrap-table.min.css">
+    <script src="/plugins/jquery-validate/dist/jquery.validate.min.js"></script>
+    <script src="/plugins/jquery-validate/dist/localization/messages_zh.min.js"></script>
+
+
+</head>
 <body>
+<style>
+    .error{
+        color: lightblue;
+    }
+</style>
 <div class="container-fluid">
 
     <!-- Button trigger modal -->
@@ -15,25 +26,17 @@
         新增学生
     </button>
 
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>#</th>
-            <th>姓名</th>
-            <th>性别</th>
-            <th>成绩</th>
-            <th style="width: 100px;">操作</th>
-        </tr>
-        </thead>
-        <tbody id="studentTb">
-<!--        <tr data-th-each="student : ${data}">-->
-<!--            <th scope="row" data-th-text="${student.id}"></th>-->
-<!--            <td data-th-text="${student.name}">Mark</td>-->
-<!--            <td data-th-text="${student.sex}">Otto</td>-->
-<!--            <td data-th-text="${student.score}">@mdo</td>-->
-<!--        </tr>-->
+    <form class="form-inline">
+        <div class="form-group">
+            <label for="searchName">请输入名字</label>
+            <input type="text" class="form-control" id="searchName" placeholder="请输入名字" name="searchName">
+        </div>
 
-        </tbody>
+        <button type="button" class="btn btn-default btn-primary" onclick="search();">查询</button>
+    </form>
+
+    <table class="table table-bordered" id="stuTable">
+
     </table>
 </div>
 
@@ -44,46 +47,64 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">学生信息</h4>
             </div>
-            <div class="modal-body">
 
 
-                <form id="formStudent">
+
+            <form id="formStudent">
+                <div class="modal-body">
                     <input hidden="hidden" id="id" name="id">
                     <div class="form-group">
+                        <label for="no">学号</label>
+                        <input type="text" class="form-control" id="no" name="no" placeholder="学号" required minlength="2" maxlength="10">
+                    </div>
+                    <div class="form-group">
                         <label for="name">姓名</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="姓名">
+                        <input type="text" class="form-control" id="name" name="name" placeholder="姓名" required minlength="2" maxlength="10">
                     </div>
                     <div class="form-group">
                         <label for="password">密码</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="密码">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="密码" required ="5"minlength="5">
                     </div>
                     <div class="form-group">
                         <label for="sex">性别</label>
-                        <select class="form-control" id="sex" name="sex">
-                            <option value="1">男</option>
-                            <option value="2">女</option>
-
+                        <select class="form-control" id="sex" name="sex" >
+                            <option value="0" selected="selected">男</option>
+                            <option value="1">女</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="score">成绩</label>
-                        <input type="text" class="form-control" id="score" name="score" placeholder="成绩">
+                        <input type="text" class="form-control" id="score" name="score" placeholder="成绩" required maxlength="2"minlength="0" max="100" min="0">
                     </div>
-                </form>
-<!--                表单结束-->
 
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" onclick="saveStudent();">保存</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="submit" class="btn btn-primary" >保存</button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <script src="/js/bootstrap.min.js"></script>
+
+<script src="/plugins/bootstraptable/bootstrap-table.min.js"></script>
+<script src="/plugins/bootstraptable/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="/plugins/jquery-validate/dist/jquery.validate.min.js"></script>
+<script src="/plugins/jquery-validate/dist/localization/messages_zh.min.js"></script>
+
+
 <script type="text/javascript">
 
+    function search() {
+
+        $('#stuTable').bootstrapTable("destroy")
+        loadTable();
+    }
     function preAdd(){
         $("#id").val(0);//新增
 
@@ -106,7 +127,7 @@
                 data:data
 
             }).done(function () {
-
+                $('#stuTable').bootstrapTable("destroy");
                 loadTable();
                 $('#myModal').modal('hide')
             })
@@ -121,7 +142,7 @@
                 data:data
 
             }).done(function () {
-
+                $('#stuTable').bootstrapTable("destroy")
                 loadTable();
                 $('#myModal').modal('hide')
             })
@@ -138,11 +159,14 @@
         }).done(function (rs) {
 
             $("#id").val(rs.id);
+            $("#no").val(rs.no);
             $("#name").val(rs.name);
             $("#password").val("");
             $("#sex").val(rs.sex);
             $("#score").val(rs.score);
         })
+        $('#stuTable').bootstrapTable("destroy")
+        loadTable();
     }
 
     function deleteStudent(id){
@@ -153,44 +177,80 @@
                 method:"delete"
 
             }).done(function () {
-
+                $('#stuTable').bootstrapTable("destroy")
                 loadTable();
             })
         }
 
     }
 
-    function loadTable(){
-        $.ajax({
-            url:'/webapi/student/list'
-        }).done(function (rs) {
+    function actionFormatter(value, row, index) {
+        var id = value;
+        var result = "";
+        result += "<a href='javascript:;' class='btn btn-xs blue' onclick=\"edit('" + id + "')\" title='编辑'><span class='glyphicon glyphicon-new-window'></span></a>";
+        result += "<a href='javascript:;' class='btn btn-xs red' onclick=\"deleteStudent('" + id + "')\" title='删除' ><span class='glyphicon glyphicon-trash'></span></a>";
 
-            var len=rs.length;
-            var html="";
-            for(var i=0; i < len; i++){
-                var item=rs[i];
-
-                if(item.sex==1){
-                    item.sex="男";
-                }
-                if(item.sex==2){
-                    item.sex="女";
-                }
-                html+="<tr>"
-                    +"<td>"+item.id+"</td>"
-                    +"<td>"+item.name+"</td>"
-                    +"<td>"+item.sex+"</td>"
-                    +"<td>"+item.score+"</td>"
-                    +"<td> <a href='#' onclick='edit( "+item.id+");'>编辑</a>    <a href='#' onclick='deleteStudent("+item.id +")'>删除</a></td>"
-
-                    +"</tr>";
-            }
-
-            $("#studentTb").html(html);
-        })
+        return result;
     }
+
+    function loadTable(){
+        $('#stuTable').bootstrapTable({
+            url: '/webapi/student/getbypage',
+            striped:true,//设置true隔行变色
+            pagination:true,//设置true在底部显示分页条
+            singleSelect: false,//设置true禁止多选
+            pageSize:3,//每页分页条书
+            pageNumber:1,//首页页码
+            sidePagination: "server",//在那里分页
+            queryParams:function (params){
+                var paraObj = {
+                    size: params.limit,
+                    page:params.offset/params.limit,
+                    sort:"id",
+                    direct:"desc",
+                    name:$("#searchName").val()
+
+                };
+
+                return paraObj;
+            },
+            columns: [{
+                field: 'id',
+                title: '序号'
+            }, {
+                field: 'name',
+                title: '姓名'
+            },{
+                field: 'no',
+                title: '学号'
+            }, {
+                field: 'sex',
+                title: '性别'
+            },{
+                field: 'score',
+                title: '成绩'
+            },{
+                field: 'id',
+                title: '操作',
+                formatter: actionFormatter,
+            },]
+        })
+    }//loadTable()结束
     $(function() {
         loadTable();
+    })
+
+    function submitStuForm(){
+        $("#formStudent").validate({
+            submitHandler: function (form){
+                saveStudent();
+            }
+        })
+    }
+
+    $(function () {
+        $("#formStudent").validate({submitHandler:saveStudent});
+        $("#stuTable").bootstrapTable({url:'webapi/student/list'});
     })
 
 </script>
