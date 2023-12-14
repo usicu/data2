@@ -1,16 +1,23 @@
 package cn.edu.ctbu.data.webapi;
 
+import ch.qos.logback.classic.Logger;
 import cn.edu.ctbu.data.core.PageUntils;
 import cn.edu.ctbu.data.domain.Student;
 import cn.edu.ctbu.data.service.StudentService;
+import cn.edu.ctbu.data.utils.RUtil;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.util.StringUtils;
-
+import cn.edu.ctbu.data.vo.R;
 import java.util.List;
 
+
 @RestController
+@Slf4j
 @RequestMapping("/webapi/student")
 
 public class StudentRestController {
@@ -18,14 +25,22 @@ public class StudentRestController {
     @Autowired
     private StudentService studentService;
 
+
     /**
      * 读取的url：/webapi/student/list
      * @return
      */
-    @GetMapping("/list")
+  /* @GetMapping("/list")
     public List<Student> getAll(){
         List<Student> students=studentService.findAll();
         return students;
+    }*/
+
+
+    @GetMapping("/list")
+    public R<Page<Student>> list(int pageIndex,int pageSize){
+        Pageable pageable=PageRequest.of(pageIndex,pageSize,Sort.by("id").descending());
+        return RUtil.success(studentService.findAll(pageable));
     }
 
     /**
@@ -97,7 +112,27 @@ public class StudentRestController {
         student=studentService.update(student);
         return student;
     }
+    /*@PostMapping(value = "/webapi/student/Insert")
+    public int Insert(@Valid Student student, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
 
+            log.info(bindingResult.getFieldError().getDefaultMessage());
+            return -1;
+        }
+        studentService.Insert(student);
+        Integer myid=student.getId();
+        return myid.intValue();
+    }*/
+    @PostMapping("/add")
+    public R add(@Valid Student student,BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            String errorMsg=bindingResult.getFieldError().getDefaultMessage();
+            log.info("新增学生出错了!{}",errorMsg);
+            return RUtil.error(-10,errorMsg);
+        }
+        studentService.Insert(student);
+        return RUtil.success();
+    }
     /**
      * 删除
      * @param id
@@ -108,5 +143,6 @@ public class StudentRestController {
         studentService.delete(id);
 //        return student1;
     }
+
 
 }

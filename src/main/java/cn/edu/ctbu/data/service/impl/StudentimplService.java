@@ -33,7 +33,7 @@ public class StudentimplService implements StudentService {
     /**
      * 分页，带过滤的查询
      */
-    public  Page<Student> findAll(Example<Student> student, Pageable pageable){
+    public  Page<Student> findAll(Example<Student> student,Pageable pageable){
         return studentRepository.findAll(student,pageable);
     }
 
@@ -80,7 +80,10 @@ public class StudentimplService implements StudentService {
         studentRepository.save(student);
         return student;
     }
-
+    public Student add(Student student){
+        studentRepository.save(student);
+        return student ;
+    }
 
     public Student update(Student student){
         studentRepository.save(student);
@@ -97,7 +100,10 @@ public class StudentimplService implements StudentService {
 
         studentRepository.delete(student);
     }
-
+    @Override
+    public Student insert(Student student){
+        return studentRepository.save(student);
+    }
 
 
 }

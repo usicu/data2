@@ -1,9 +1,11 @@
 package cn.edu.ctbu.data.repository;
 
 import cn.edu.ctbu.data.domain.Student;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 public interface StudentRepository extends JpaRepository<Student,Integer> {
@@ -21,7 +23,4 @@ public interface StudentRepository extends JpaRepository<Student,Integer> {
      * @return
      */
     List<Student> findByNameAndPassword(String name,String password);
-
-    @Query("select o from tb_student o where o.no = (select max(o2.no) from  tb_student o2)")
-    Student getmaxno();
 }
