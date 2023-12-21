@@ -43,6 +43,12 @@ public class StudentRestController {
         return RUtil.success(studentService.findAll(pageable));
     }
 
+    @GetMapping("/validateUser")
+    public R validateSnoAndPassword(String no,String password) throws Exception{
+        return RUtil.success(studentService.validateUsernameAndPassword(no,password));
+    }
+
+
     /**
      * 分页，读取全部内容
      * @return

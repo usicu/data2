@@ -1,5 +1,7 @@
 package cn.edu.ctbu.data.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.ui.Model;
 //import ch.qos.logback.core.model.Model;
 import cn.edu.ctbu.data.domain.Student;
@@ -17,7 +19,12 @@ public class StudentController {
     StudentService studentService;
 
     @RequestMapping("/student/list")
-    public String list(Model model){
+    public String list(HttpServletRequest httprequest, Model model){
+
+        HttpSession session=httprequest.getSession();
+        if(session.getAttribute("userid")==null){
+            return "redirect:/login/user";
+        }
 
         List<Student> students=studentService.findAll();
 
@@ -26,5 +33,7 @@ public class StudentController {
 
         return "/student/list";
     }
+
+
 
 }

@@ -1,6 +1,8 @@
 package cn.edu.ctbu.data.service.impl;
 
+import cn.edu.ctbu.data.constain.REnum;
 import cn.edu.ctbu.data.domain.Student;
+import cn.edu.ctbu.data.exception.RException;
 import cn.edu.ctbu.data.repository.StudentRepository;
 import cn.edu.ctbu.data.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 
 @Service
 public class StudentimplService implements StudentService {
@@ -103,6 +106,26 @@ public class StudentimplService implements StudentService {
     @Override
     public Student insert(Student student){
         return studentRepository.save(student);
+    }
+
+
+    public Student validateUsernameAndPassword(String username,String passeord) throws Exception{
+        List<Student> students=studentRepository.findByno(username);
+        if(students.size() > 0){
+            //可能对password加密，暂时不做处理
+            Student student=students.get(0);
+            if(student.getPassword().equals(passeord)){
+
+                //成功
+                return student;
+            }else {
+                throw new RException(REnum.LOGIN_ERR);
+            }
+
+        }else {
+            throw new RException(REnum.LOGIN_ERR);
+        }
+
     }
 
 

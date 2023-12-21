@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.awt.print.Pageable;
 import java.util.List;
 
+
 public interface StudentRepository extends JpaRepository<Student,Integer> {
     /**
      * 按名字查询
@@ -23,4 +24,9 @@ public interface StudentRepository extends JpaRepository<Student,Integer> {
      * @return
      */
     List<Student> findByNameAndPassword(String name,String password);
+
+
+    public List<Student> findByno(String no);
+
 }
+

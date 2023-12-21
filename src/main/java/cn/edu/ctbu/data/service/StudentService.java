@@ -71,4 +71,12 @@ public interface StudentService {
 
     Student add(Student student);
     public Student insert(Student student);
+
+
+    /**
+     * 验证用户名和密码，如果通过，返回读取的学生
+     * @param username
+     * @param passeord
+     */
+    public Student validateUsernameAndPassword(String username,String passeord) throws Exception;
 }
